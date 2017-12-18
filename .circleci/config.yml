@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/bensallen/everycommit
+    environment:
+      - CGO_ENABLED: 0
+    steps:
+      - checkout
+      - run:
+          command: go test -v
+      - run: 
+          environment:
+            - GOOS: linux
+          command: go build -v
+      - store_artifacts:
+          path: everycommit
