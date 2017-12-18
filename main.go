@@ -81,11 +81,13 @@ func main() {
 		help     bool
 		url      string
 		repopath string
+		cwd      string
 	)
 
 	flag.BoolVar(&help, "h", false, "Display this help screen and quit")
 	flag.StringVar(&url, "u", "", "Pull request URL, eg: https://github.com/<owner>/<project>/pull/<ID>")
 	flag.StringVar(&repopath, "r", "", "Directory of cloned repository")
+	flag.StringVar(&cwd, "d", "", "Working directory, defaults to repository path")
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s [options] cmd [args...]:\n", filepath.Base(os.Args[0]))
@@ -103,6 +105,10 @@ func main() {
 	if url == "" || repopath == "" {
 		flag.Usage()
 		os.Exit(2)
+	}
+
+	if cwd == "" {
+		cwd = repopath
 	}
 
 	wt, err := openRepo(repopath)
@@ -127,7 +133,7 @@ func main() {
 		cmd := exec.Command(args[0], args[1:]...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		cmd.Dir = repopath
+		cmd.Dir = cwd
 
 		if err := run(cmd, wt, commit, os.Stderr); err != nil {
 			fmt.Fprintf(os.Stderr, "error, %s\n", err)
