@@ -71,7 +71,7 @@ func run(cmd *exec.Cmd, wt *git.Worktree, commit *github.RepositoryCommit, out i
 		return fmt.Errorf("git checkout, %s\n", err)
 	}
 
-	fmt.Fprintf(out, "Running: %s %s\n", cmd.Path, cmd.Args)
+	fmt.Fprintf(out, "Running: %s %s\n", cmd.Path, strings.Join(cmd.Args[1:], " "))
 
 	return cmd.Run()
 }
